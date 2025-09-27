@@ -18,8 +18,7 @@ import {
   Clock,
   Users,
   TrendingUp,
-  HelpCircle,
-  Palette
+  HelpCircle
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { ThemeToggle } from './ThemeToggle'
@@ -49,7 +48,6 @@ function Layout({ children }) {
     { name: 'Analytics', href: '/analytics', icon: TrendingUp, roles: ['admin'] },
     { name: 'Users', href: '/users', icon: Users, roles: ['admin'] },
     { name: 'Help & Support', href: '/help', icon: HelpCircle, roles: ['user', 'admin', 'delivery_partner'] },
-    { name: 'Background Themes', href: '/background-demo', icon: Palette, roles: ['user', 'admin', 'delivery_partner'] },
     { name: 'Contact', href: '/contact', icon: Mail, roles: ['user', 'admin', 'delivery_partner'] },
   ]
 
@@ -65,17 +63,17 @@ function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       {/* Main content */}
       <div className="flex flex-col">
         {/* Top bar */}
-        <header className="glass-card border-b border-white/20 sticky top-0 z-30">
+        <header className="bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-30">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center space-x-8">
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-2">
-                <Package className="h-8 w-8 text-white" />
-                <span className="text-xl font-bold text-white">Uniship</span>
+                <Package className="h-8 w-8 text-primary" />
+                <span className="text-xl font-bold text-foreground">Uniship</span>
               </Link>
               
               {/* Navigation */}
@@ -88,8 +86,8 @@ function Layout({ children }) {
                       to={item.href}
                       className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         isActive(item.href)
-                          ? 'bg-white/20 text-white'
-                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -113,9 +111,9 @@ function Layout({ children }) {
               </div>
 
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10">
+              <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+                <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full"></span>
               </Button>
 
               {/* Theme Toggle */}
@@ -126,13 +124,13 @@ function Layout({ children }) {
                 <img
                   src={user?.avatar}
                   alt={user?.user_name || user?.name}
-                  className="h-8 w-8 rounded-full object-cover border border-white/20"
+                  className="h-8 w-8 rounded-full object-cover border border-border"
                 />
                 <div className="hidden sm:block">
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium text-foreground">
                     {user?.user_name || user?.name}
                   </span>
-                  <p className="text-xs text-white/70 capitalize">
+                  <p className="text-xs text-muted-foreground capitalize">
                     {user?.role === 'delivery_partner' ? 'Delivery Partner' : 
                      user?.role === 'admin' ? 'Admin' : 
                      user?.role === 'user' ? 'User' : user?.role}
@@ -142,7 +140,7 @@ function Layout({ children }) {
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="hidden sm:flex text-white hover:bg-white/10"
+                  className="hidden sm:flex"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign out
@@ -159,7 +157,7 @@ function Layout({ children }) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden glass-card border-b border-white/20 shadow-lg"
+              className="md:hidden bg-card border-b border-border shadow-lg"
             >
               <nav className="px-4 py-4 space-y-2">
                 {filteredNavigation.map((item) => {
@@ -170,8 +168,8 @@ function Layout({ children }) {
                       to={item.href}
                       className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         isActive(item.href)
-                          ? 'bg-white/20 text-white'
-                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                       }`}
                       onClick={() => setSidebarOpen(false)}
                     >
@@ -191,6 +189,7 @@ function Layout({ children }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className="p-4 sm:p-6 lg:p-8"
           >
             {children}
           </motion.div>

@@ -14,16 +14,13 @@ import {
   Star
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { useBackground } from '../contexts/BackgroundContext'
 import { mockShipments, mockAnalytics } from '../data/mockData'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
-import BackgroundSelector from '../components/BackgroundSelector'
 
 function Home() {
   const { user } = useAuth()
-  const { changeTheme, currentTheme } = useBackground()
   const [recentShipments, setRecentShipments] = useState([])
   const [stats, setStats] = useState({
     totalShipments: 0,
@@ -109,20 +106,8 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen p-4 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="floating-elements">
-        <div className="floating-circle"></div>
-        <div className="floating-circle"></div>
-        <div className="floating-circle"></div>
-        <div className="floating-circle"></div>
-        <div className="floating-circle"></div>
-      </div>
-      
-      {/* Geometric Pattern Overlay */}
-      <div className="geometric-pattern"></div>
-      
-      {/* Additional Animated Elements */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
@@ -148,18 +133,6 @@ function Home() {
           }}
           className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/10 to-orange-600/10 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{
-            rotate: 180,
-            scale: [0.8, 1.3, 0.8],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/5 to-indigo-600/5 rounded-full blur-3xl"
-        />
       </div>
 
       <motion.div
@@ -168,14 +141,9 @@ function Home() {
         animate="visible"
         className="space-y-8 relative z-10 max-w-7xl mx-auto"
       >
-        {/* Header with Background Selector */}
-        <motion.div variants={itemVariants} className="flex justify-end mb-4">
-          <BackgroundSelector onThemeChange={changeTheme} currentTheme={currentTheme} />
-        </motion.div>
-
         {/* Welcome Section */}
         <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-3xl shadow-2xl p-8 text-white">
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <motion.h1 
@@ -214,7 +182,7 @@ function Home() {
           {(user?.role === 'user' || user?.role === 'admin') && (
             <Link to="/create-shipment">
               <motion.div 
-                className="glass-card rounded-2xl shadow-xl p-6 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
+                className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
                 whileHover={{ scale: 1.02, y: -5 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -236,7 +204,7 @@ function Home() {
 
           <Link to="/tracking">
             <motion.div 
-              className="glass-card rounded-2xl shadow-xl p-6 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
+              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -257,7 +225,7 @@ function Home() {
 
           <Link to="/profile">
             <motion.div 
-              className="glass-card rounded-2xl shadow-xl p-6 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
+              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -280,7 +248,7 @@ function Home() {
         {/* Stats Cards */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div 
-            className="glass-card rounded-2xl shadow-xl p-6 text-white"
+            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.2 }}
           >
@@ -296,7 +264,7 @@ function Home() {
           </motion.div>
 
           <motion.div 
-            className="glass-card rounded-2xl shadow-xl p-6 text-white"
+            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.2 }}
           >
@@ -312,7 +280,7 @@ function Home() {
           </motion.div>
 
           <motion.div 
-            className="glass-card rounded-2xl shadow-xl p-6 text-white"
+            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.2 }}
           >
@@ -328,7 +296,7 @@ function Home() {
           </motion.div>
 
           <motion.div 
-            className="glass-card rounded-2xl shadow-xl p-6 text-white"
+            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.2 }}
           >
@@ -346,7 +314,7 @@ function Home() {
 
         {/* Recent Shipments */}
         <motion.div variants={itemVariants}>
-          <div className="glass-card rounded-3xl shadow-2xl p-8 text-white">
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Recent Shipments</h2>
               <Link
@@ -362,7 +330,7 @@ function Home() {
                   <motion.div
                     key={shipment.id}
                     variants={itemVariants}
-                    className="flex items-center justify-between p-4 glass-card rounded-xl hover:bg-white/20 transition-all duration-300"
+                    className="flex items-center justify-between p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
                     whileHover={{ scale: 1.02 }}
                   >
                     <div className="flex items-center space-x-4">
@@ -418,11 +386,11 @@ function Home() {
         {/* Role-specific content */}
         {user?.role === 'admin' && (
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="glass-card rounded-3xl shadow-2xl p-8 text-white">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
               <h3 className="text-xl font-bold text-white mb-6">Top Destinations</h3>
               <div className="space-y-3">
                 {mockAnalytics.topDestinations.map((destination, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 glass-card rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <MapPin className="h-4 w-4 text-blue-300" />
                       <span className="text-white">{destination.city}</span>
@@ -433,11 +401,11 @@ function Home() {
               </div>
             </div>
 
-            <div className="glass-card rounded-3xl shadow-2xl p-8 text-white">
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
               <h3 className="text-xl font-bold text-white mb-6">Service Types</h3>
               <div className="space-y-3">
                 {mockAnalytics.serviceTypes.map((service, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 glass-card rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
                     <span className="text-white">{service.type}</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-20 bg-white/20 rounded-full h-2">
