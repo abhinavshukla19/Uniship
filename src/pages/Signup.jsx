@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Package, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Package, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import toast from 'react-hot-toast'
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -15,14 +16,17 @@ function Signup() {
       street: '',
       city: '',
       state: '',
-      zipCode: '',
-      country: 'USA'
-    }
+      pincode: '',
+      country: 'India'
+    },
+    role: 'user'
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [focusedField, setFocusedField] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
   const { signup } = useAuth()
   const navigate = useNavigate()
 
@@ -44,7 +48,7 @@ function Signup() {
       })
     }
     
-    // Clear error when user starts typing
+    
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -92,8 +96,8 @@ function Signup() {
       newErrors['address.state'] = 'State is required'
     }
 
-    if (!formData.address.zipCode.trim()) {
-      newErrors['address.zipCode'] = 'ZIP code is required'
+    if (!formData.address.pincode.trim()) {
+      newErrors['address.pincode'] = 'Pin code is required'
     }
 
     setErrors(newErrors)
@@ -112,7 +116,10 @@ function Signup() {
     try {
       const result = await signup(formData)
       if (result.success) {
-        navigate('/')
+        setShowSuccess(true)
+        setTimeout(() => {
+          navigate('/')
+        }, 2000)
       }
     } catch (error) {
       console.error('Signup error:', error)
@@ -122,49 +129,147 @@ function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-color to-primary-light flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            rotate: 360,
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            rotate: -360,
+            scale: [1.2, 1, 1.2],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-orange-600/20 rounded-full blur-3xl"
+        />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-2xl"
+        className="w-full max-w-2xl relative z-10"
       >
         {/* Logo */}
         <div className="text-center mb-8">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-lg mb-4"
+            className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-full shadow-2xl mb-6 border border-white/20"
           >
-            <Package className="h-8 w-8 text-primary-color" />
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Package className="h-10 w-10 text-white" />
+            </motion.div>
           </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">Uniship</h1>
-          <p className="text-blue-100">Create your account</p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-4xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+          >
+            Create Account
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-blue-100 text-lg"
+          >
+            Join Uniship to start tracking packages
+          </motion.p>
         </div>
+
+        {/* Success Animation */}
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ y: 50 }}
+                animate={{ y: 0 }}
+                className="bg-white rounded-2xl p-8 text-center max-w-md mx-4"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring" }}
+                  className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                >
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h3>
+                <p className="text-gray-600">Welcome to Uniship! Redirecting...</p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Signup Form */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-xl p-8"
+          className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20"
         >
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
-            <p className="text-gray-600">Join Uniship to start tracking packages</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-center mb-8"
+          >
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+              <Sparkles className="h-6 w-6 text-yellow-400" />
+              Join Uniship
+              <Sparkles className="h-6 w-6 text-yellow-400" />
+            </h2>
+            <p className="text-blue-100">Start your shipping journey today</p>
+          </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Personal Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
               <div>
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                   Full Name
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <motion.div
+                      animate={{ 
+                        scale: focusedField === 'name' ? 1.1 : 1,
+                        color: focusedField === 'name' ? '#60a5fa' : '#9ca3af'
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <User className="h-5 w-5" />
+                    </motion.div>
                   </div>
                   <input
                     type="text"
@@ -172,21 +277,42 @@ function Signup() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`form-input pl-10 ${errors.name ? 'border-red-500' : ''}`}
+                    onFocus={() => setFocusedField('name')}
+                    onBlur={() => setFocusedField('')}
+                    className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors.name ? 'border-red-400 ring-2 ring-red-400' : ''}`}
                     placeholder="Enter your full name"
                     required
                   />
                 </div>
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                <AnimatePresence>
+                  {errors.name && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-red-300 text-sm mt-1"
+                    >
+                      {errors.name}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div>
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                   Email Address
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <motion.div
+                      animate={{ 
+                        scale: focusedField === 'email' ? 1.1 : 1,
+                        color: focusedField === 'email' ? '#60a5fa' : '#9ca3af'
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Mail className="h-5 w-5" />
+                    </motion.div>
                   </div>
                   <input
                     type="email"
@@ -194,22 +320,47 @@ function Signup() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`form-input pl-10 ${errors.email ? 'border-red-500' : ''}`}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField('')}
+                    className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors.email ? 'border-red-400 ring-2 ring-red-400' : ''}`}
                     placeholder="Enter your email"
                     required
                   />
                 </div>
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                <AnimatePresence>
+                  {errors.email && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-red-300 text-sm mt-1"
+                    >
+                      {errors.email}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
+            </motion.div>
 
-            <div>
-              <label htmlFor="phone" className="form-label">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                 Phone Number
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-gray-400" />
+                  <motion.div
+                    animate={{ 
+                      scale: focusedField === 'phone' ? 1.1 : 1,
+                      color: focusedField === 'phone' ? '#60a5fa' : '#9ca3af'
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Phone className="h-5 w-5" />
+                  </motion.div>
                 </div>
                 <input
                   type="tel"
@@ -217,23 +368,98 @@ function Signup() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`form-input pl-10 ${errors.phone ? 'border-red-500' : ''}`}
+                  onFocus={() => setFocusedField('phone')}
+                  onBlur={() => setFocusedField('')}
+                  className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors.phone ? 'border-red-400 ring-2 ring-red-400' : ''}`}
                   placeholder="Enter your phone number"
                   required
                 />
               </div>
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-            </div>
+              <AnimatePresence>
+                {errors.phone && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-red-300 text-sm mt-1"
+                  >
+                    {errors.phone}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Role Selection */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+            >
+              <label htmlFor="role" className="block text-sm font-medium text-white mb-2">
+                Account Type
+              </label>
+              <div className="relative">
+                <select
+                  id="role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('role')}
+                  onBlur={() => setFocusedField('')}
+                  className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 appearance-none cursor-pointer ${errors.role ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                  required
+                >
+                  <option value="user" className="bg-gray-800 text-white">User - Send and receive packages</option>
+                  <option value="delivery_partner" className="bg-gray-800 text-white">Delivery Partner - Deliver packages</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <motion.div
+                    animate={{ 
+                      rotate: focusedField === 'role' ? 180 : 0,
+                      color: focusedField === 'role' ? '#60a5fa' : '#9ca3af'
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ArrowRight className="h-5 w-5 rotate-90" />
+                  </motion.div>
+                </div>
+              </div>
+              <AnimatePresence>
+                {errors.role && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-red-300 text-sm mt-1"
+                  >
+                    {errors.role}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
             {/* Password Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
               <div>
-                <label htmlFor="password" className="form-label">
+                <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
                   Password
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <motion.div
+                      animate={{ 
+                        scale: focusedField === 'password' ? 1.1 : 1,
+                        color: focusedField === 'password' ? '#60a5fa' : '#9ca3af'
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Lock className="h-5 w-5" />
+                    </motion.div>
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -241,32 +467,55 @@ function Signup() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`form-input pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField('')}
+                    className={`w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors.password ? 'border-red-400 ring-2 ring-red-400' : ''}`}
                     placeholder="Create a password"
                     required
                   />
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:scale-110 transition-transform duration-200"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <EyeOff className="h-5 w-5 text-blue-300 hover:text-white transition-colors" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <Eye className="h-5 w-5 text-blue-300 hover:text-white transition-colors" />
                     )}
-                  </button>
+                  </motion.button>
                 </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                <AnimatePresence>
+                  {errors.password && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-red-300 text-sm mt-1"
+                    >
+                      {errors.password}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="form-label">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
                   Confirm Password
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <motion.div
+                      animate={{ 
+                        scale: focusedField === 'confirmPassword' ? 1.1 : 1,
+                        color: focusedField === 'confirmPassword' ? '#60a5fa' : '#9ca3af'
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Lock className="h-5 w-5" />
+                    </motion.div>
                   </div>
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -274,145 +523,326 @@ function Signup() {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`form-input pl-10 pr-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                    onFocus={() => setFocusedField('confirmPassword')}
+                    onBlur={() => setFocusedField('')}
+                    className={`w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors.confirmPassword ? 'border-red-400 ring-2 ring-red-400' : ''}`}
                     placeholder="Confirm your password"
                     required
                   />
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:scale-110 transition-transform duration-200"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <EyeOff className="h-5 w-5 text-blue-300 hover:text-white transition-colors" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <Eye className="h-5 w-5 text-blue-300 hover:text-white transition-colors" />
                     )}
-                  </button>
+                  </motion.button>
                 </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                <AnimatePresence>
+                  {errors.confirmPassword && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-red-300 text-sm mt-1"
+                    >
+                      {errors.confirmPassword}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
+            </motion.div>
 
             {/* Address Information */}
-            <div className="border-t pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+              className="border-t border-white/20 pt-6"
+            >
+              <motion.h3 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.2 }}
+                className="text-lg font-semibold text-white mb-6 flex items-center"
+              >
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <MapPin className="h-5 w-5 mr-2 text-blue-400" />
+                </motion.div>
                 Address Information
-              </h3>
+              </motion.h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
                 <div className="md:col-span-2">
-                  <label htmlFor="address.street" className="form-label">
+                  <label htmlFor="address.street" className="block text-sm font-medium text-white mb-2">
                     Street Address
                   </label>
-                  <input
-                    type="text"
-                    id="address.street"
-                    name="address.street"
-                    value={formData.address.street}
-                    onChange={handleChange}
-                    className={`form-input ${errors['address.street'] ? 'border-red-500' : ''}`}
-                    placeholder="Enter your street address"
-                    required
-                  />
-                  {errors['address.street'] && <p className="text-red-500 text-sm mt-1">{errors['address.street']}</p>}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <motion.div
+                        animate={{ 
+                          scale: focusedField === 'address.street' ? 1.1 : 1,
+                          color: focusedField === 'address.street' ? '#60a5fa' : '#9ca3af'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <MapPin className="h-5 w-5" />
+                      </motion.div>
+                    </div>
+                    <input
+                      type="text"
+                      id="address.street"
+                      name="address.street"
+                      value={formData.address.street}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('address.street')}
+                      onBlur={() => setFocusedField('')}
+                      className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors['address.street'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                      placeholder="Enter your street address"
+                      required
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errors['address.street'] && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-300 text-sm mt-1"
+                      >
+                        {errors['address.street']}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div>
-                  <label htmlFor="address.city" className="form-label">
+                  <label htmlFor="address.city" className="block text-sm font-medium text-white mb-2">
                     City
                   </label>
-                  <input
-                    type="text"
-                    id="address.city"
-                    name="address.city"
-                    value={formData.address.city}
-                    onChange={handleChange}
-                    className={`form-input ${errors['address.city'] ? 'border-red-500' : ''}`}
-                    placeholder="Enter your city"
-                    required
-                  />
-                  {errors['address.city'] && <p className="text-red-500 text-sm mt-1">{errors['address.city']}</p>}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <motion.div
+                        animate={{ 
+                          scale: focusedField === 'address.city' ? 1.1 : 1,
+                          color: focusedField === 'address.city' ? '#60a5fa' : '#9ca3af'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <MapPin className="h-5 w-5" />
+                      </motion.div>
+                    </div>
+                    <input
+                      type="text"
+                      id="address.city"
+                      name="address.city"
+                      value={formData.address.city}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('address.city')}
+                      onBlur={() => setFocusedField('')}
+                      className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors['address.city'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                      placeholder="Enter your city"
+                      required
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errors['address.city'] && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-300 text-sm mt-1"
+                      >
+                        {errors['address.city']}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div>
-                  <label htmlFor="address.state" className="form-label">
+                  <label htmlFor="address.state" className="block text-sm font-medium text-white mb-2">
                     State
                   </label>
-                  <input
-                    type="text"
-                    id="address.state"
-                    name="address.state"
-                    value={formData.address.state}
-                    onChange={handleChange}
-                    className={`form-input ${errors['address.state'] ? 'border-red-500' : ''}`}
-                    placeholder="Enter your state"
-                    required
-                  />
-                  {errors['address.state'] && <p className="text-red-500 text-sm mt-1">{errors['address.state']}</p>}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <motion.div
+                        animate={{ 
+                          scale: focusedField === 'address.state' ? 1.1 : 1,
+                          color: focusedField === 'address.state' ? '#60a5fa' : '#9ca3af'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <MapPin className="h-5 w-5" />
+                      </motion.div>
+                    </div>
+                    <input
+                      type="text"
+                      id="address.state"
+                      name="address.state"
+                      value={formData.address.state}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('address.state')}
+                      onBlur={() => setFocusedField('')}
+                      className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors['address.state'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                      placeholder="Enter your state"
+                      required
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errors['address.state'] && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-300 text-sm mt-1"
+                      >
+                        {errors['address.state']}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div>
-                  <label htmlFor="address.zipCode" className="form-label">
-                    ZIP Code
+                  <label htmlFor="address.pincode" className="block text-sm font-medium text-white mb-2">
+                    Pin Code
                   </label>
-                  <input
-                    type="text"
-                    id="address.zipCode"
-                    name="address.zipCode"
-                    value={formData.address.zipCode}
-                    onChange={handleChange}
-                    className={`form-input ${errors['address.zipCode'] ? 'border-red-500' : ''}`}
-                    placeholder="Enter your ZIP code"
-                    required
-                  />
-                  {errors['address.zipCode'] && <p className="text-red-500 text-sm mt-1">{errors['address.zipCode']}</p>}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <motion.div
+                        animate={{ 
+                          scale: focusedField === 'address.pincode' ? 1.1 : 1,
+                          color: focusedField === 'address.pincode' ? '#60a5fa' : '#9ca3af'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <MapPin className="h-5 w-5" />
+                      </motion.div>
+                    </div>
+                    <input
+                      type="text"
+                      id="address.pincode"
+                      name="address.pincode"
+                      value={formData.address.pincode}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('address.pincode')}
+                      onBlur={() => setFocusedField('')}
+                      className={`w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 ${errors['address.pincode'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                      placeholder="Enter your pin code"
+                      required
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errors['address.pincode'] && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-red-300 text-sm mt-1"
+                      >
+                        {errors['address.pincode']}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div>
-                  <label htmlFor="address.country" className="form-label">
+                  <label htmlFor="address.country" className="block text-sm font-medium text-white mb-2">
                     Country
                   </label>
-                  <select
-                    id="address.country"
-                    name="address.country"
-                    value={formData.address.country}
-                    onChange={handleChange}
-                    className="form-input form-select"
-                  >
-                    <option value="USA">United States</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Mexico">Mexico</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="address.country"
+                      name="address.country"
+                      value={formData.address.country}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('address.country')}
+                      onBlur={() => setFocusedField('')}
+                      className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 hover:bg-white/20 appearance-none cursor-pointer`}
+                    >
+                      <option value="USA" className="bg-gray-800 text-white">United States</option>
+                      <option value="India" className="bg-gray-800 text-white">India</option>
+                      <option value="China" className="bg-gray-800 text-white">China</option>
+                      <option value="Nepal" className="bg-gray-800 text-white">Nepal</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <motion.div
+                        animate={{ 
+                          rotate: focusedField === 'address.country' ? 180 : 0,
+                          color: focusedField === 'address.country' ? '#60a5fa' : '#9ca3af'
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ArrowRight className="h-5 w-5 rotate-90" />
+                      </motion.div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="btn btn-primary w-full btn-lg"
+              className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3 }}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="rounded-full h-5 w-5 border-b-2 border-white mr-2"
+                  />
                   Creating account...
                 </div>
               ) : (
-                'Create Account'
+                <div className="flex items-center justify-center">
+                  <span>Create Account</span>
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="ml-2"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </motion.div>
+                </div>
               )}
-            </button>
+            </motion.button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4 }}
+            className="mt-8 text-center"
+          >
+            <p className="text-blue-100">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary-color hover:text-primary-dark font-medium">
+              <Link 
+                to="/login" 
+                className="text-white hover:text-blue-200 font-medium transition-colors duration-200 hover:underline"
+              >
                 Sign in
               </Link>
             </p>
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>

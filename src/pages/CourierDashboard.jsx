@@ -30,7 +30,7 @@ function CourierDashboard() {
 
   useEffect(() => {
     // Find courier data
-    const courierData = mockCouriers.find(c => c.id === user?.id)
+    const courierData = mockCouriers.find(c => c.id === user?.user_id || c.id === user?.id)
     if (courierData) {
       setCourier(courierData)
       setCurrentLocation(courierData.currentLocation)
@@ -38,7 +38,7 @@ function CourierDashboard() {
 
     // Get assigned shipments
     const assigned = mockShipments.filter(shipment => 
-      shipment.courier?.id === user?.id
+      shipment.courier?.id === user?.user_id || shipment.courier?.id === user?.id
     )
     setAssignedShipments(assigned)
   }, [user])

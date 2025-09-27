@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { BackgroundProvider, useBackground } from './contexts/BackgroundContext'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -14,6 +15,7 @@ import Profile from './pages/Profile'
 import AdminDashboard from './pages/AdminDashboard'
 import CourierDashboard from './pages/CourierDashboard'
 import Contact from './pages/Contact'
+import BackgroundDemo from './pages/BackgroundDemo'
 
 // Dynamic Page Title Component
 function PageTitle() {
@@ -47,6 +49,8 @@ function PageTitle() {
           return 'Courier Dashboard | Uniship'
         case '/contact':
           return 'Contact | Uniship'
+        case '/background-demo':
+          return 'Background Themes | Uniship'
         default:
           if (location.pathname.startsWith('/shipment/')) {
             return 'Shipment Details | Uniship'
@@ -83,10 +87,23 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <PageTitle />
-          <div className="min-h-screen bg-background text-foreground">
+      <BackgroundProvider>
+        <AuthProvider>
+          <Router>
+            <PageTitle />
+            <AppContent />
+          </Router>
+        </AuthProvider>
+      </BackgroundProvider>
+    </ThemeProvider>
+  )
+}
+
+function AppContent() {
+  const { backgroundClass } = useBackground()
+  
+  return (
+    <div className={`min-h-screen ${backgroundClass} text-white`}>
             <Toaster 
               position="top-right"
               toastOptions={{
@@ -153,7 +170,7 @@ function App() {
             } />
             
             <Route path="/courier" element={
-              <ProtectedRoute allowedRoles={['courier']}>
+              <ProtectedRoute allowedRoles={['delivery_partner']}>
                 <Layout>
                   <CourierDashboard />
                 </Layout>
@@ -167,11 +184,14 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             } />
+            
+            <Route path="/background-demo" element={
+              <ProtectedRoute>
+                <BackgroundDemo />
+              </ProtectedRoute>
+            } />
           </Routes>
-          </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    </div>
   )
 }
 
