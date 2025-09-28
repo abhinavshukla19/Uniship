@@ -66,15 +66,15 @@ function Home() {
 
   const getStatusColor = (status) => {
     const colors = {
-      'created': 'text-gray-500',
-      'picked-up': 'text-blue-500',
-      'in-transit': 'text-yellow-500',
-      'out-for-delivery': 'text-purple-500',
-      'delivered': 'text-green-500',
-      'exception': 'text-red-500',
-      'returned': 'text-orange-500'
+      'created': 'text-muted-foreground',
+      'picked-up': 'text-info',
+      'in-transit': 'text-warning',
+      'out-for-delivery': 'text-primary',
+      'delivered': 'text-success',
+      'exception': 'text-destructive',
+      'returned': 'text-warning'
     }
-    return colors[status] || 'text-gray-500'
+    return colors[status] || 'text-muted-foreground'
   }
 
   const getStatusLabel = (status) => {
@@ -106,32 +106,32 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen bg-background p-4 relative overflow-hidden">
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
             rotate: 360,
-            scale: [1, 1.2, 1],
+            scale: [1, 1.1, 1],
           }}
           transition={{
-            duration: 30,
+            duration: 40,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-primary/3 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
             rotate: -360,
-            scale: [1.2, 1, 1.2],
+            scale: [1.1, 1, 1.1],
           }}
           transition={{
-            duration: 35,
+            duration: 45,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/10 to-orange-600/10 rounded-full blur-3xl"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-info/3 rounded-full blur-3xl"
         />
       </div>
 
@@ -143,38 +143,41 @@ function Home() {
       >
         {/* Welcome Section */}
         <motion.div variants={itemVariants}>
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-4xl font-bold mb-3 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
-                >
-                  Welcome back, {(user?.user_name || user?.name)?.split(' ')[0]}!
-                </motion.h1>
-                <motion.p 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-blue-100 text-lg"
-                >
-                  {user?.role === 'admin' && 'Manage your shipping operations efficiently'}
-                  {user?.role === 'user' && 'Track your packages and create new shipments'}
-                  {user?.role === 'delivery_partner' && 'View your delivery assignments and update status'}
-                </motion.p>
+          <Card className="shadow-lg border-0 bg-gradient-to-r from-primary/3 to-info/3">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <motion.h1 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-4xl font-bold mb-3 text-foreground"
+                  >
+                    Welcome back, {(user?.user_name || user?.name)?.split(' ')[0]}!
+                  </motion.h1>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-muted-foreground text-lg"
+                  >
+                    {user?.role === 'admin' && 'Manage your shipping operations efficiently'}
+                    {user?.role === 'user' && 'Track your packages and create new shipments'}
+                    {user?.role === 'delivery_partner' && 'View your delivery assignments and update status'}
+                  </motion.p>
+                </div>
+                <div className="hidden md:block">
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-24 h-24 bg-primary/8 rounded-full flex items-center justify-center"
+                  >
+                    <Package className="h-12 w-12 text-primary" />
+                  </motion.div>
+                </div>
               </div>
-              <div className="hidden md:block">
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Package className="h-24 w-24 text-white/60" />
-                </motion.div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* Quick Actions */}
@@ -182,20 +185,20 @@ function Home() {
           {(user?.role === 'user' || user?.role === 'admin') && (
             <Link to="/create-shipment">
               <motion.div 
-                className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
-                whileHover={{ scale: 1.02, y: -5 }}
+                className="bg-card rounded-xl shadow-md p-6 border border-border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="flex items-center space-x-4">
                   <motion.div 
-                    className="p-3 bg-orange-500/20 rounded-lg group-hover:bg-orange-500/30 transition-colors"
+                    className="p-3 bg-primary/8 rounded-lg group-hover:bg-primary/15 transition-colors"
                     whileHover={{ rotate: 5 }}
                   >
-                    <Plus className="h-6 w-6 text-orange-400" />
+                    <Plus className="h-6 w-6 text-primary" />
                   </motion.div>
                   <div>
-                    <h3 className="font-semibold text-white">Create Shipment</h3>
-                    <p className="text-sm text-blue-200">Send a new package</p>
+                    <h3 className="font-semibold text-card-foreground">Create Shipment</h3>
+                    <p className="text-sm text-muted-foreground">Send a new package</p>
                   </div>
                 </div>
               </motion.div>
@@ -204,20 +207,20 @@ function Home() {
 
           <Link to="/tracking">
             <motion.div 
-              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
-              whileHover={{ scale: 1.02, y: -5 }}
+              className="bg-card rounded-xl shadow-md p-6 border border-border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center space-x-4">
                 <motion.div 
-                  className="p-3 bg-teal-500/20 rounded-lg group-hover:bg-teal-500/30 transition-colors"
+                    className="p-3 bg-info/8 rounded-lg group-hover:bg-info/15 transition-colors"
                   whileHover={{ rotate: 5 }}
                 >
-                  <Search className="h-6 w-6 text-teal-400" />
+                  <Search className="h-6 w-6 text-info" />
                 </motion.div>
                 <div>
-                  <h3 className="font-semibold text-white">Track Package</h3>
-                  <p className="text-sm text-blue-200">Find your shipment</p>
+                  <h3 className="font-semibold text-card-foreground">Track Package</h3>
+                  <p className="text-sm text-muted-foreground">Find your shipment</p>
                 </div>
               </div>
             </motion.div>
@@ -225,20 +228,20 @@ function Home() {
 
           <Link to="/profile">
             <motion.div 
-              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white group hover:bg-white/20 transition-all duration-300 cursor-pointer"
-              whileHover={{ scale: 1.02, y: -5 }}
+              className="bg-card rounded-xl shadow-md p-6 border border-border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center space-x-4">
                 <motion.div 
-                  className="p-3 bg-amber-500/20 rounded-lg group-hover:bg-amber-500/30 transition-colors"
+                    className="p-3 bg-warning/8 rounded-lg group-hover:bg-warning/15 transition-colors"
                   whileHover={{ rotate: 5 }}
                 >
-                  <Users className="h-6 w-6 text-amber-400" />
+                  <Users className="h-6 w-6 text-warning" />
                 </motion.div>
                 <div>
-                  <h3 className="font-semibold text-white">Profile</h3>
-                  <p className="text-sm text-blue-200">Manage your account</p>
+                  <h3 className="font-semibold text-card-foreground">Profile</h3>
+                  <p className="text-sm text-muted-foreground">Manage your account</p>
                 </div>
               </div>
             </motion.div>
@@ -248,65 +251,65 @@ function Home() {
         {/* Stats Cards */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div 
-            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
-            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-card rounded-xl shadow-md p-6 border border-border"
+            whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-200">Total Shipments</p>
-                <p className="text-2xl font-bold text-white">{stats.totalShipments}</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Shipments</p>
+                <p className="text-2xl font-bold text-card-foreground">{stats.totalShipments}</p>
               </div>
-              <div className="p-3 bg-indigo-500/20 rounded-lg">
-                <Package className="h-6 w-6 text-indigo-400" />
+              <div className="p-3 bg-primary/8 rounded-lg">
+                <Package className="h-6 w-6 text-primary" />
               </div>
             </div>
           </motion.div>
 
           <motion.div 
-            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
-            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-card rounded-xl shadow-md p-6 border border-border"
+            whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-200">Delivered Today</p>
-                <p className="text-2xl font-bold text-white">{stats.deliveredToday}</p>
+                <p className="text-sm font-medium text-muted-foreground">Delivered Today</p>
+                <p className="text-2xl font-bold text-card-foreground">{stats.deliveredToday}</p>
               </div>
-              <div className="p-3 bg-emerald-500/20 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-emerald-400" />
+              <div className="p-3 bg-success/8 rounded-lg">
+                <CheckCircle className="h-6 w-6 text-success" />
               </div>
             </div>
           </motion.div>
 
           <motion.div 
-            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
-            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-card rounded-xl shadow-md p-6 border border-border"
+            whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-200">In Transit</p>
-                <p className="text-2xl font-bold text-white">{stats.inTransit}</p>
+                <p className="text-sm font-medium text-muted-foreground">In Transit</p>
+                <p className="text-2xl font-bold text-card-foreground">{stats.inTransit}</p>
               </div>
-              <div className="p-3 bg-amber-500/20 rounded-lg">
-                <Truck className="h-6 w-6 text-amber-400" />
+              <div className="p-3 bg-warning/8 rounded-lg">
+                <Truck className="h-6 w-6 text-warning" />
               </div>
             </div>
           </motion.div>
 
           <motion.div 
-            className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20 text-white"
-            whileHover={{ scale: 1.05, y: -5 }}
+            className="bg-card rounded-xl shadow-md p-6 border border-border"
+            whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-200">Pending Pickup</p>
-                <p className="text-2xl font-bold text-white">{stats.pendingPickup}</p>
+                <p className="text-sm font-medium text-muted-foreground">Pending Pickup</p>
+                <p className="text-2xl font-bold text-card-foreground">{stats.pendingPickup}</p>
               </div>
-              <div className="p-3 bg-orange-500/20 rounded-lg">
-                <Clock className="h-6 w-6 text-orange-400" />
+              <div className="p-3 bg-info/8 rounded-lg">
+                <Clock className="h-6 w-6 text-info" />
               </div>
             </div>
           </motion.div>
@@ -314,35 +317,38 @@ function Home() {
 
         {/* Recent Shipments */}
         <motion.div variants={itemVariants}>
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Recent Shipments</h2>
-              <Link
-                to="/tracking"
-                className="text-blue-300 hover:text-white font-medium text-sm transition-colors"
-              >
-                View all
-              </Link>
-            </div>
+          <Card className="shadow-lg border-0">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl font-bold">Recent Shipments</CardTitle>
+                <Link
+                  to="/tracking"
+                  className="text-primary hover:text-primary/80 font-medium text-sm transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent>
             {recentShipments.length > 0 ? (
               <div className="space-y-4">
                 {recentShipments.map((shipment) => (
                   <motion.div
-                    key={shipment.id}
+                    key={shipment.shipment_id}
                     variants={itemVariants}
-                    className="flex items-center justify-between p-4 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
-                    whileHover={{ scale: 1.02 }}
+                    className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted/80 transition-all duration-300 border border-border"
+                    whileHover={{ scale: 1.01 }}
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-white/20 rounded-lg">
-                        <Package className="h-5 w-5 text-white" />
+                      <div className="p-2 bg-primary/8 rounded-lg">
+                        <Package className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">
-                          {shipment.trackingNumber}
+                        <p className="font-medium text-card-foreground">
+                          {shipment.tracking_number}
                         </p>
-                        <p className="text-sm text-blue-200">
-                          {shipment.package.description}
+                        <p className="text-sm text-muted-foreground">
+                          {shipment.package_description}
                         </p>
                       </div>
                     </div>
@@ -351,13 +357,13 @@ function Home() {
                         <p className={`text-sm font-medium ${getStatusColor(shipment.status)}`}>
                           {getStatusLabel(shipment.status)}
                         </p>
-                        <p className="text-xs text-blue-200">
-                          {new Date(shipment.updatedAt).toLocaleDateString()}
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(shipment.updated_at).toLocaleDateString()}
                         </p>
                       </div>
                       <Link
-                        to={`/shipment/${shipment.id}`}
-                        className="text-blue-300 hover:text-white transition-colors"
+                        to={`/shipment/${shipment.shipment_id}`}
+                        className="text-primary hover:text-primary/80 transition-colors"
                       >
                         <TrendingUp className="h-4 w-4" />
                       </Link>
@@ -367,12 +373,12 @@ function Home() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <Package className="h-12 w-12 text-white/60 mx-auto mb-4" />
-                <p className="text-blue-200">No recent shipments found</p>
+                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No recent shipments found</p>
                 {(user?.role === 'user' || user?.role === 'admin') && (
                   <Link
                     to="/create-shipment"
-                    className="inline-flex items-center mt-4 text-white hover:text-blue-200 font-medium transition-colors"
+                    className="inline-flex items-center mt-4 text-primary hover:text-primary/80 font-medium transition-colors"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Create your first shipment
@@ -380,7 +386,8 @@ function Home() {
                 )}
               </div>
             )}
-          </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* Role-specific content */}

@@ -19,6 +19,7 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Badge } from '../components/ui/badge'
+import toast from 'react-hot-toast'
 
 function Profile() {
   const { user, updateProfile, changePassword, deleteAccount } = useAuth()
@@ -110,10 +111,12 @@ function Profile() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (validateForm()) {
-      updateProfile(formData)
-      setIsEditing(false)
+      const result = await updateProfile(formData)
+      if (result.success) {
+        setIsEditing(false)
+      }
     }
   }
 
@@ -171,32 +174,32 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen bg-background p-4 relative overflow-hidden">
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
             rotate: 360,
-            scale: [1, 1.2, 1],
+            scale: [1, 1.1, 1],
           }}
           transition={{
-            duration: 30,
+            duration: 40,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-primary/3 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
             rotate: -360,
-            scale: [1.2, 1, 1.2],
+            scale: [1.1, 1, 1.1],
           }}
           transition={{
-            duration: 35,
+            duration: 45,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/10 to-orange-600/10 rounded-full blur-3xl"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-info/3 rounded-full blur-3xl"
         />
       </div>
 
@@ -212,7 +215,7 @@ function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+            className="text-4xl font-bold text-foreground mb-3"
           >
             Profile Settings
           </motion.h1>
@@ -220,7 +223,7 @@ function Profile() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-blue-100 text-lg"
+            className="text-muted-foreground text-lg"
           >
             Manage your account information and preferences
           </motion.p>
@@ -229,41 +232,44 @@ function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Card */}
           <motion.div variants={itemVariants} className="lg:col-span-1">
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20 text-white text-center">
+            <Card className="shadow-lg border-0">
+              <CardContent className="p-6 text-center">
               <div className="relative inline-block mb-4">
                 <img
                   src={user?.avatar}
                   alt={user?.name}
-                  className="w-24 h-24 rounded-full object-cover mx-auto border border-white/30"
+                  className="w-24 h-24 rounded-full object-cover mx-auto border border-border"
                 />
                 <motion.button 
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-blue-500/80 hover:bg-blue-500 text-white flex items-center justify-center transition-colors"
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center transition-colors"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Camera className="h-4 w-4" />
                 </motion.button>
               </div>
-              <h2 className="text-xl font-semibold text-white mb-1">{user?.user_name || user?.name}</h2>
-              <p className="text-blue-200 mb-2">{user?.user_email || user?.email}</p>
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 text-sm font-medium">
+              <h2 className="text-xl font-semibold text-card-foreground mb-1">{user?.user_name || user?.name}</h2>
+              <p className="text-muted-foreground mb-2">{user?.user_email || user?.email}</p>
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 {user?.role === 'delivery_partner' ? 'Delivery Partner' : 
                  user?.role === 'admin' ? 'Admin' : 
                  user?.role === 'user' ? 'User' : user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
               </div>
-            </div>
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Personal Information */}
             <motion.div variants={itemVariants}>
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-white">Personal Information</h3>
+                  <h3 className="text-2xl font-bold text-card-foreground">Personal Information</h3>
                   {!isEditing ? (
                     <motion.button
-                      className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 rounded-lg border border-blue-400/30 transition-colors flex items-center"
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg border border-primary/30 transition-colors flex items-center"
                       onClick={() => setIsEditing(true)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -274,7 +280,7 @@ function Profile() {
                   ) : (
                     <div className="flex items-center space-x-2">
                       <motion.button
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/30 transition-colors"
+                        className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground rounded-lg border border-border transition-colors"
                         onClick={handleCancel}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -282,7 +288,7 @@ function Profile() {
                         Cancel
                       </motion.button>
                       <motion.button
-                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center"
+                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors flex items-center"
                         onClick={handleSave}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -293,178 +299,178 @@ function Profile() {
                     </div>
                   )}
                 </div>
-                <div>
 
-                  <div className="space-y-6">
+                <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-blue-200">Full Name</label>
+                        <label className="block text-sm font-medium text-muted-foreground">Full Name</label>
                         {isEditing ? (
                           <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors.name ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                            className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors.name ? 'border-destructive ring-2 ring-destructive' : ''}`}
                             placeholder="Enter your full name"
                           />
                         ) : (
-                          <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg border border-white/20">
-                            <User className="h-5 w-5 text-blue-300" />
-                            <span className="text-white">{user?.user_name || user?.name}</span>
+                          <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
+                            <User className="h-5 w-5 text-primary" />
+                            <span className="text-card-foreground">{user?.user_name || user?.name}</span>
                           </div>
                         )}
-                        {errors.name && <p className="text-red-300 text-sm">{errors.name}</p>}
+                        {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-blue-200">Email Address</label>
+                        <label className="block text-sm font-medium text-muted-foreground">Email Address</label>
                         {isEditing ? (
                           <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors.email ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                            className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors.email ? 'border-destructive ring-2 ring-destructive' : ''}`}
                             placeholder="Enter your email"
                           />
                         ) : (
-                          <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg border border-white/20">
-                            <Mail className="h-5 w-5 text-blue-300" />
-                            <span className="text-white">{user?.user_email || user?.email}</span>
+                          <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
+                            <Mail className="h-5 w-5 text-primary" />
+                            <span className="text-card-foreground">{user?.user_email || user?.email}</span>
                           </div>
                         )}
-                        {errors.email && <p className="text-red-300 text-sm">{errors.email}</p>}
+                        {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-blue-200">Phone Number</label>
+                      <label className="block text-sm font-medium text-muted-foreground">Phone Number</label>
                       {isEditing ? (
                         <input
                           type="tel"
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors.phone ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                          className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors.phone ? 'border-destructive ring-2 ring-destructive' : ''}`}
                           placeholder="Enter your phone number"
                         />
                       ) : (
-                        <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg border border-white/20">
-                          <Phone className="h-5 w-5 text-blue-300" />
-                          <span className="text-white">{user?.user_phone || user?.phone}</span>
+                        <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
+                          <Phone className="h-5 w-5 text-primary" />
+                          <span className="text-card-foreground">{user?.user_phone || user?.phone}</span>
                         </div>
                       )}
-                      {errors.phone && <p className="text-red-300 text-sm">{errors.phone}</p>}
+                      {errors.phone && <p className="text-destructive text-sm">{errors.phone}</p>}
                     </div>
 
                     {/* Address Information */}
-                    <div className="border-t border-white/20 pt-6">
-                      <h4 className="font-medium text-white mb-4 flex items-center">
-                        <MapPin className="h-5 w-5 mr-2 text-blue-300" />
+                    <div className="border-t border-border pt-6">
+                      <h4 className="font-medium text-card-foreground mb-4 flex items-center">
+                        <MapPin className="h-5 w-5 mr-2 text-primary" />
                         Address Information
                       </h4>
                       
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-blue-200">Street Address</label>
+                          <label className="block text-sm font-medium text-muted-foreground">Street Address</label>
                           {isEditing ? (
                             <input
                               type="text"
                               name="address.street"
                               value={formData.address.street}
                               onChange={handleChange}
-                              className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors['address.street'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                              className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors['address.street'] ? 'border-destructive ring-2 ring-destructive' : ''}`}
                               placeholder="Enter your street address"
                             />
                           ) : (
-                            <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                              <span className="text-white">{user?.user_street || user?.address?.street}</span>
+                            <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                              <span className="text-card-foreground">{user?.user_street || user?.address?.street}</span>
                             </div>
                           )}
-                          {errors['address.street'] && <p className="text-red-300 text-sm">{errors['address.street']}</p>}
+                          {errors['address.street'] && <p className="text-destructive text-sm">{errors['address.street']}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="space-y-2">
-                            <label className="block text-sm font-medium text-blue-200">City</label>
+                            <label className="block text-sm font-medium text-muted-foreground">City</label>
                             {isEditing ? (
                               <input
                                 type="text"
                                 name="address.city"
                                 value={formData.address.city}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors['address.city'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                                className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors['address.city'] ? 'border-destructive ring-2 ring-destructive' : ''}`}
                                 placeholder="Enter your city"
                               />
                             ) : (
-                              <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                                <span className="text-white">{user?.user_city || user?.address?.city}</span>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                <span className="text-card-foreground">{user?.user_city || user?.address?.city}</span>
                               </div>
                             )}
-                            {errors['address.city'] && <p className="text-red-300 text-sm">{errors['address.city']}</p>}
+                            {errors['address.city'] && <p className="text-destructive text-sm">{errors['address.city']}</p>}
                           </div>
 
                           <div className="space-y-2">
-                            <label className="block text-sm font-medium text-blue-200">State</label>
+                            <label className="block text-sm font-medium text-muted-foreground">State</label>
                             {isEditing ? (
                               <input
                                 type="text"
                                 name="address.state"
                                 value={formData.address.state}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors['address.state'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                                className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors['address.state'] ? 'border-destructive ring-2 ring-destructive' : ''}`}
                                 placeholder="Enter your state"
                               />
                             ) : (
-                              <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                                <span className="text-white">{user?.user_state || user?.address?.state}</span>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                <span className="text-card-foreground">{user?.user_state || user?.address?.state}</span>
                               </div>
                             )}
-                            {errors['address.state'] && <p className="text-red-300 text-sm">{errors['address.state']}</p>}
+                            {errors['address.state'] && <p className="text-destructive text-sm">{errors['address.state']}</p>}
                           </div>
 
                           <div className="space-y-2">
-                            <label className="block text-sm font-medium text-blue-200">ZIP Code</label>
+                            <label className="block text-sm font-medium text-muted-foreground">ZIP Code</label>
                             {isEditing ? (
                               <input
                                 type="text"
                                 name="address.zipCode"
                                 value={formData.address.zipCode}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 ${errors['address.zipCode'] ? 'border-red-400 ring-2 ring-red-400' : ''}`}
+                                className={`w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 ${errors['address.zipCode'] ? 'border-destructive ring-2 ring-destructive' : ''}`}
                                 placeholder="Enter your ZIP code"
                               />
                             ) : (
-                              <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                                <span className="text-white">{user?.user_pincode || user?.address?.zipCode}</span>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                                <span className="text-card-foreground">{user?.user_pincode || user?.address?.zipCode}</span>
                               </div>
                             )}
-                            {errors['address.zipCode'] && <p className="text-red-300 text-sm">{errors['address.zipCode']}</p>}
+                            {errors['address.zipCode'] && <p className="text-destructive text-sm">{errors['address.zipCode']}</p>}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* Account Settings */}
             <motion.div variants={itemVariants}>
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
-                <h3 className="text-2xl font-bold text-white mb-6">Account Settings</h3>
+              <Card className="shadow-lg border-0">
+                <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-card-foreground mb-6">Account Settings</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-white/20 rounded-lg bg-white/5">
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/50">
                     <div className="flex items-center space-x-3">
-                      <Shield className="h-5 w-5 text-blue-300" />
+                      <Shield className="h-5 w-5 text-primary" />
                       <div>
-                        <h4 className="font-medium text-white">Change Password</h4>
-                        <p className="text-sm text-blue-200">Update your account password</p>
+                        <h4 className="font-medium text-card-foreground">Change Password</h4>
+                        <p className="text-sm text-muted-foreground">Update your account password</p>
                       </div>
                     </div>
                     <motion.button 
-                      className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 rounded-lg border border-blue-400/30 transition-colors flex items-center"
+                      className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg border border-primary/30 transition-colors flex items-center"
                       onClick={() => setShowPasswordModal(true)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -474,16 +480,16 @@ function Profile() {
                     </motion.button>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 border border-white/20 rounded-lg bg-white/5">
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/50">
                     <div className="flex items-center space-x-3">
-                      <Bell className="h-5 w-5 text-blue-300" />
+                      <Bell className="h-5 w-5 text-primary" />
                       <div>
-                        <h4 className="font-medium text-white">Notification Preferences</h4>
-                        <p className="text-sm text-blue-200">Manage your notification settings</p>
+                        <h4 className="font-medium text-card-foreground">Notification Preferences</h4>
+                        <p className="text-sm text-muted-foreground">Manage your notification settings</p>
                       </div>
                     </div>
                     <motion.button 
-                      className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/30 transition-colors flex items-center"
+                      className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground rounded-lg border border-border transition-colors flex items-center"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -492,16 +498,16 @@ function Profile() {
                     </motion.button>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 border border-red-400/30 rounded-lg bg-red-500/10">
+                  <div className="flex items-center justify-between p-4 border border-destructive/30 rounded-lg bg-destructive/10">
                     <div className="flex items-center space-x-3">
-                      <Trash2 className="h-5 w-5 text-red-400" />
+                      <Trash2 className="h-5 w-5 text-destructive" />
                       <div>
-                        <h4 className="font-medium text-red-400">Delete Account</h4>
-                        <p className="text-sm text-red-300">Permanently delete your account</p>
+                        <h4 className="font-medium text-destructive">Delete Account</h4>
+                        <p className="text-sm text-destructive">Permanently delete your account</p>
                       </div>
                     </div>
                     <motion.button 
-                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center"
+                      className="px-4 py-2 bg-destructive hover:bg-destructive/90 text-card-foreground rounded-lg transition-colors flex items-center"
                       onClick={() => setShowDeleteModal(true)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -511,29 +517,32 @@ function Profile() {
                     </motion.button>
                   </div>
                 </div>
-              </div>
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* Role-specific Information */}
             {user?.role === 'delivery_partner' && (
               <motion.div variants={itemVariants}>
-                <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/20 text-white">
-                  <h3 className="text-2xl font-bold text-white mb-6">Delivery Partner Information</h3>
+                <Card className="shadow-lg border-0">
+                  <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold text-card-foreground mb-6">Delivery Partner Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-blue-200">Vehicle</label>
-                      <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                        <span className="text-white">{user?.vehicle || 'Not assigned'}</span>
+                      <label className="block text-sm font-medium text-muted-foreground">Vehicle</label>
+                      <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                        <span className="text-card-foreground">{user?.vehicle || 'Not assigned'}</span>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-blue-200">License Number</label>
-                      <div className="p-3 bg-white/10 rounded-lg border border-white/20">
-                        <span className="text-white">{user?.licenseNumber || 'Not provided'}</span>
+                      <label className="block text-sm font-medium text-muted-foreground">License Number</label>
+                      <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                        <span className="text-card-foreground">{user?.licenseNumber || 'Not provided'}</span>
                       </div>
                     </div>
                   </div>
-                </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             )}
           </div>
@@ -542,33 +551,33 @@ function Profile() {
         {/* Password Change Modal */}
         {showPasswordModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 w-full max-w-md mx-4 border border-white/20 text-white">
-              <h3 className="text-lg font-semibold mb-4 text-white">Change Password</h3>
+            <div className="bg-muted/50 backdrop-blur-md rounded-2xl p-6 w-full max-w-md mx-4 border border-border text-card-foreground">
+              <h3 className="text-lg font-semibold mb-4 text-card-foreground">Change Password</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">New Password</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">New Password</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                     placeholder="Enter new password"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">Confirm New Password</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                     placeholder="Confirm new password"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                   />
                 </div>
               </div>
               <div className="flex justify-end space-x-2 mt-6">
                 <motion.button 
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/30 transition-colors"
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground rounded-lg border border-border transition-colors"
                   onClick={() => setShowPasswordModal(false)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -576,7 +585,7 @@ function Profile() {
                   Cancel
                 </motion.button>
                 <motion.button 
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors"
                   onClick={handlePasswordChange}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -591,26 +600,26 @@ function Profile() {
         {/* Account Deletion Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 w-full max-w-md mx-4 border border-white/20 text-white">
-              <h3 className="text-lg font-semibold mb-4 text-red-400">Delete Account</h3>
-              <p className="text-sm text-blue-200 mb-4">
+            <div className="bg-muted/50 backdrop-blur-md rounded-2xl p-6 w-full max-w-md mx-4 border border-border text-card-foreground">
+              <h3 className="text-lg font-semibold mb-4 text-destructive">Delete Account</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 This action cannot be undone. Please enter your password to confirm account deletion.
               </p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">Password</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">Password</label>
                   <input
                     type="password"
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                   />
                 </div>
               </div>
               <div className="flex justify-end space-x-2 mt-6">
                 <motion.button 
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/30 transition-colors"
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground rounded-lg border border-border transition-colors"
                   onClick={() => setShowDeleteModal(false)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -618,7 +627,7 @@ function Profile() {
                   Cancel
                 </motion.button>
                 <motion.button 
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-destructive hover:bg-destructive/90 text-card-foreground rounded-lg transition-colors"
                   onClick={handleAccountDeletion}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

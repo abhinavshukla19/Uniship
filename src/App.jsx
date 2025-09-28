@@ -14,6 +14,9 @@ import Profile from './pages/Profile'
 import AdminDashboard from './pages/AdminDashboard'
 import CourierDashboard from './pages/CourierDashboard'
 import Contact from './pages/Contact'
+import MyShipments from './pages/MyShipments'
+import Analytics from './pages/Analytics'
+import Help from './pages/Help'
 
 // Dynamic Page Title Component
 function PageTitle() {
@@ -164,6 +167,30 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Contact />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/my-shipments" element={
+              <ProtectedRoute allowedRoles={['user', 'admin']}>
+                <Layout>
+                  <MyShipments />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/analytics" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Layout>
+                  <Analytics />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/help" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Help />
                 </Layout>
               </ProtectedRoute>
             } />

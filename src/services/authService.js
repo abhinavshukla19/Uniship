@@ -42,7 +42,7 @@ export const authService = {
     return response.data
   },
 
-  // Get user profile (if you add this endpoint)
+  // Get user profile
   getProfile: async () => {
     const response = await api.get('/profile')
     return response.data
